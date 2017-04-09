@@ -21,6 +21,10 @@ class Keyboards(object):
         pass
 
     def get_keyboard_manufacturer(self):
+        """
+        Get the name of the keyboard manufacturer by accessing the win32api
+        :return: str such as in BRANDS
+        """
         all_devices = hid.HidDeviceFilter().get_devices_by_parent()
         manufacturers = []
         for parent, hid_items in all_devices.items():
@@ -33,6 +37,10 @@ class Keyboards(object):
         raise ValueError("Product manufacturer could not be established.")
 
     def get_keyboard_model(self):
+        """
+        Get the name of the keyboard model by accessing the win32api
+        :return: str such as in MODELS
+        """
         all_devices = hid.HidDeviceFilter().get_devices_by_parent()
         products = []
         for parent, hid_items in all_devices.items():
@@ -45,6 +53,10 @@ class Keyboards(object):
         raise ValueError("Product model could not be established.")
 
     def get_control_object(self):
+        """
+        Get a control object for the user's keyboard automatically
+        :return: object
+        """
         manufacturer = self.get_keyboard_manufacturer()
         if manufacturer == "Cooler Master":
             return MasterKeys()
@@ -56,6 +68,10 @@ class Keyboards(object):
             raise ValueError("No valid manufacturer found.")
 
     def get_setup_control_object(self):
+        """
+        Get a control object that is fully setup and ready to use with its functions
+        :return: object
+        """
         manufacturer = self.get_keyboard_manufacturer()
         model = self.get_keyboard_model()
         if manufacturer == "Cooler Master":
