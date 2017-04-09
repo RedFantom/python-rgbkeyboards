@@ -5,6 +5,7 @@ from corsair.corsair import Corsair
 from masterkeys.masterkeys import MasterKeys
 from logitech.logitech import Logitech
 from pywinusb import hid
+import cue_sdk
 
 
 class Keyboards(object):
@@ -44,10 +45,45 @@ class Keyboards(object):
         raise ValueError("Product model could not be established.")
 
     def get_control_object(self):
-        pass
+        manufacturer = self.get_keyboard_manufacturer()
+        if manufacturer == "Cooler Master":
+            return MasterKeys()
+        elif manufacturer == "Logitech":
+            return Logitech()
+        elif manufacturer == "Corsair":
+            return Corsair()
+        else:
+            raise ValueError("No valid manufacturer found.")
 
     def get_setup_control_object(self):
-        pass
+        manufacturer = self.get_keyboard_manufacturer()
+        model = self.get_keyboard_model()
+        if manufacturer == "Cooler Master":
+            keyboard = MasterKeys()
+            if model == "MasterKeys Pro L":
+                keyboard.set_control_device(MasterKeys.RGB_L)
+            elif model == "MasterKeys Pro M":
+                keyboard.set_control_device(MasterKeys.RGB_M)
+            elif model == "MasterKeys Pro S":
+                keyboard.set_control_device(MasterKeys.RGB_S)
+            else:
+                raise ValueError("No valid manufacturer/model combination found.")
+            keyboard.set_led_control_enabled(True)
+            return keyboard
+        elif manufacturer == "Logitech":
+            keyboard = Logitech()
+            if model == "G810":
+                keyboard.set_control_device(Logitech.RGB_PK)
+            elif model == "G910":
+                keyboard.set_control_device(Logitech.RGB_ST)
+            else:
+                raise ValueError("No valid manufacturer/model combination found.")
+        elif manufacturer == "Corsair":
+            keyboard = Corsair()
+            keyboard.set_control_device(cue_sdk.CDT.Keyboard)
+            return keyboard
+        else:
+            raise ValueError("No valid manufacturer found.")
 
 
 if __name__ == '__main__':
