@@ -1,7 +1,7 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-from logipy.logi_led import *
+from .logipy.logi_led import *
 
 keys = {'esc': ESC,
         'F1': F1,

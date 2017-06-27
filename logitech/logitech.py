@@ -1,8 +1,8 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-from logipy import logi_led as library
-from keys import *
+from .logipy import logi_led as library
+from .keys import *
 from pynput import keyboard as kb
 
 
@@ -61,7 +61,7 @@ class Logitech(object):
     def set_ind_led_color(leds):
         if not isinstance(leds, dict):
             raise ValueError("Parameter leds is not a dictionary")
-        for key, value in leds.iteritems():
+        for key, value in leds.items():
             if key not in keys:
                 raise ValueError("Invalid key found")
             if not isinstance(value, tuple):

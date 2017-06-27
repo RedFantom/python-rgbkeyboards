@@ -27,7 +27,7 @@ class Keyboards(object):
         """
         all_devices = hid.HidDeviceFilter().get_devices_by_parent()
         manufacturers = []
-        for parent, hid_items in all_devices.items():
+        for parent, hid_items in list(all_devices.items()):
             for item in hid_items:
                 manufacturers.append(item.vendor_name)
         for brand in self.BRANDS:
@@ -43,7 +43,7 @@ class Keyboards(object):
         """
         all_devices = hid.HidDeviceFilter().get_devices_by_parent()
         products = []
-        for parent, hid_items in all_devices.items():
+        for parent, hid_items in list(all_devices.items()):
             for item in hid_items:
                 products.append(item.product_name)
         for model in self.MODELS:
@@ -103,5 +103,5 @@ class Keyboards(object):
 
 
 if __name__ == '__main__':
-    print Keyboards().get_keyboard_manufacturer()
-    print Keyboards().get_keyboard_model()
+    print(Keyboards().get_keyboard_manufacturer())
+    print(Keyboards().get_keyboard_model())

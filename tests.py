@@ -56,7 +56,7 @@ class TestMasterKeys(unittest.TestCase):
         self.masterkeys.set_control_device(MasterKeys.RGB_L)
         self.masterkeys.set_led_control_enabled(True)
         parameter = {}
-        for key in mkkeys.L_US.iterkeys():
+        for key in mkkeys.L_US.keys():
             parameter[key] = (255, 255, 255)
         self.assertTrue(self.masterkeys.set_ind_led_color(parameter))
 

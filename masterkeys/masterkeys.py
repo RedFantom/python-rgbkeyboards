@@ -4,7 +4,7 @@
 from ctypes import c_bool, c_float, c_int, c_void_p, WINFUNCTYPE
 from ctypes import cdll
 import os
-from keys import *
+from .keys import *
 import platform
 
 
@@ -198,7 +198,7 @@ class MasterKeys(object):
             raise ValueError("Parameter leds is not a dictionary")
         if self.kb_size == self.INVALID or self.get_layout() == self.LAYOUT_DEF:
             raise ValueError("Control device not set")
-        for key, value in leds.iteritems():
+        for key, value in leds.items():
             if key not in self.layout:
                 raise ValueError("Invalid key found")
             if not isinstance(value, tuple):

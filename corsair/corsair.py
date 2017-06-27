@@ -6,9 +6,9 @@ import platform
 from cue_sdk.api import *
 from cue_sdk.structures import *
 from cue_sdk.enumerations import *
-from exceptions import *
+from cue_sdk.exceptions import *
 from pynput import keyboard as kb
-from keys import *
+from .keys import *
 
 
 class Corsair(object):
@@ -104,7 +104,7 @@ class Corsair(object):
             raise ValueError("Parameters passed not all int type")
         if not 0 < r < 255 or not 0 < g < 255 or not 0 < b < 255:
             raise ValueError("Parameters not within range")
-        return self.library.set_led_colors([CorsairLedColor(i, r, g, b) for i in keys.itervalues()])
+        return self.library.set_led_colors([CorsairLedColor(i, r, g, b) for i in keys.values()])
 
     def set_ind_led_color(self, leds):
         """
@@ -115,7 +115,7 @@ class Corsair(object):
         if not isinstance(leds, dict):
             raise ValueError("Parameter leds is not a dictionary")
         parameter = []
-        for key, value in leds.iteritems():
+        for key, value in leds.items():
             if key not in keys:
                 raise ValueError("Invalid key found")
             if not isinstance(value, tuple):

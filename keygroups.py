@@ -15,4 +15,4 @@ controls = ['esc', 'printscreen', 'scrolllock', 'pause', 'backspace', 'up', 'dow
             'pageup', 'delete', 'end', 'pagedown', 'P1', 'P2', 'P3', 'P4']
 
 if __name__ == '__main__':
-    print len(alphanumeric) + len(functionkeys) + len(modifiers) + len(keypad) + len(controls)
+    print(len(alphanumeric) + len(functionkeys) + len(modifiers) + len(keypad) + len(controls))
