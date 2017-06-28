@@ -63,17 +63,3 @@ class TestMasterKeys(unittest.TestCase):
     @staticmethod
     def callback(*args):
         pass
-
-
-class TestCorsair(unittest.TestCase):
-    pass
-
-
-class TestLogitech(unittest.TestCase):
-    pass
-
-
-class TestK85(unittest.TestCase):
-    pass
-
-unittest.main()
