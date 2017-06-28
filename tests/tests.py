@@ -2,11 +2,8 @@
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
 import unittest
-from masterkeys.masterkeys import MasterKeys
-import masterkeys.keys as mkkeys
-from corsair.corsair import Corsair
-from logitech.logitech import Logitech
-import time
+from rgbkeyboards.masterkeys.masterkeys import MasterKeys
+import rgbkeyboards.masterkeys.keys as mkkeys
 
 
 class TestMasterKeys(unittest.TestCase):
