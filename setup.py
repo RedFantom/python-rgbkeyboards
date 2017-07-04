@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name="rgbkeyboards",
     packages=["rgbkeyboards"],
-    version="0.1.0",
+    version="0.1.1",
     description="A library to control RGB Keyboards on Windows",
     author="RedFantom",
     url="https://www.github.com/RedFantom/python-rgb-keyboards",
@@ -18,5 +18,5 @@ setup(
                  "License :: OSI Approved :: MIT License",
                  "Operating System :: Microsoft :: Windows"],
     include_package_data=True,
-    install_requires=["pywinusb", "cue_sdk"]
+    install_requires=["pywinusb", "cue_sdk", "pynput"]
 )
