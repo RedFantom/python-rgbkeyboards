@@ -15,7 +15,7 @@ keypad = ['numlock', '(/)', '(*)', '(-)', '(7)', '(8)', '(9)', '(4)', '(5)', '(6
 controls = ['esc', 'printscreen', 'scrolllock', 'pause', 'backspace', 'up', 'down', 'left', 'right', 'insert', 'home',
             'pageup', 'delete', 'end', 'pagedown', 'P1', 'P2', 'P3', 'P4']
 
-pynput = {
+pynput_rgb_keys = {
     Key.shift: "shift_l",
     Key.shift_l: "shift_l",
     Key.shift_r: "shift_r",
@@ -52,7 +52,7 @@ pynput = {
     Key.f12: "F12",
 }
 
-pynput.update({(item, ) : item for item in alphanumeric})
+pynput_rgb_keys.update({(item,): item for item in alphanumeric})
 
 if __name__ == '__main__':
     print(len(alphanumeric) + len(functionkeys) + len(modifiers) + len(keypad) + len(controls))
