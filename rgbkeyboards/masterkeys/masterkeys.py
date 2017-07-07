@@ -3,9 +3,9 @@
 # For license see LICENSE
 from ctypes import c_bool, c_float, c_int, c_void_p, WINFUNCTYPE
 from ctypes import cdll
-import os
 from .keys import *
 import platform
+from ..utilities import get_dll_path
 
 
 class MasterKeys(object):
@@ -67,16 +67,16 @@ class MasterKeys(object):
     EFF_MULTI_4 = 0xE3
     EFF_OFF = 0xFE
 
-    def __init__(self, sdk_dir=os.path.join(os.path.dirname(os.path.realpath(__file__))[:-10], "sdks")):
+    def __init__(self, path=get_dll_path("CoolerMaster.dll"), path64=get_dll_path("CoolerMaster64.dll")):
         """
         Loads the library upon initialization and sets all the correct return types for the functions in the library
         so they can be directly read by the Python function calling the C function. Does not change the working
         directory of the program to load the library.
         """
         if int(platform.architecture()[0][:2]) == 64:
-            self.library = cdll.LoadLibrary(os.path.join(sdk_dir, "CoolerMaster64.dll"))
+            self.library = cdll.LoadLibrary(path64)
         else:
-            self.library = cdll.LoadLibrary(os.path.join(sdk_dir, "CoolerMaster.dll"))
+            self.library = cdll.LoadLibrary(path)
         self.library.GetCM_SDK_DllVer.restype = c_int
         self.library.GetNowVolumePeekValue.restype = c_float
         self.library.SetControlDevice.restype = c_void_p

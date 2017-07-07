@@ -7,6 +7,7 @@ from pynput import keyboard as kb
 from ctypes import cdll, c_bool
 from platform import architecture
 import os
+from ..utilities import get_dll_path
 
 
 class Logitech(object):
@@ -14,7 +15,7 @@ class Logitech(object):
     RGB_PK = defs.LOGI_DEVICETYPE_PERKEY_RGB
     WHITE = defs.LOGI_DEVICETYPE_MONOCHROME
 
-    def __init__(self, path="../sdsk/Logitech.dll", path64="../sdks/Logitech64.dll"):
+    def __init__(self, path=get_dll_path("Logitech.dll"), path64=get_dll_path("Logitech64.dll")):
         self._path = path64 if int(architecture()[0][:2]) == 64 else path
         if not os.path.exists(self._path):
             raise FileNotFoundError

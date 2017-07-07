@@ -1,14 +1,13 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-import os
 import platform
 from cue_sdk.api import *
 from cue_sdk.structures import *
 from cue_sdk.enumerations import *
-from cue_sdk.exceptions import *
 from pynput import keyboard as kb
 from .keys import *
+from ..utilities import get_dll_path
 
 
 class Corsair(object):
@@ -17,11 +16,11 @@ class Corsair(object):
     README.md of the corsair folder in this repository.
     """
 
-    def __init__(self, sdk_dir=os.path.join(os.path.dirname(os.path.realpath(__file__)).replace("corsair", ""), "sdk")):
+    def __init__(self, path=get_dll_path("Corsair.dll"), path64=get_dll_path("Corsair64.dll")):
         if int(platform.architecture()[0][:2]) == 64:
-            self.library = CUESDK(os.path.join(sdk_dir, "Corsair64.dll"))
+            self.library = CUESDK(path)
         else:
-            self.library = CUESDK(os.path.join(sdk_dir, "Corsair.dll"))
+            self.library = CUESDK(path64)
         self._callback = None
         self._listener = None
 
