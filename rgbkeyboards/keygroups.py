@@ -1,7 +1,7 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-from pynput.keyboard import Key
+from pynput.keyboard import Key, KeyCode
 
 alphanumeric = ['`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
                 'tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\',
@@ -38,6 +38,7 @@ pynput_rgb_keys = {
     Key.delete: "delete",
     Key.end: "end",
     Key.page_down: "pagedown",
+    Key.enter: "enter",
     Key.f1: "F1",
     Key.f2: "F2",
     Key.f3: "F3",
@@ -52,7 +53,7 @@ pynput_rgb_keys = {
     Key.f12: "F12",
 }
 
-pynput_rgb_keys.update({(item,): item for item in alphanumeric})
+pynput_rgb_keys.update({KeyCode(char=item): item for item in alphanumeric})
 
 if __name__ == '__main__':
     print(len(alphanumeric) + len(functionkeys) + len(modifiers) + len(keypad) + len(controls))
