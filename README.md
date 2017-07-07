@@ -71,5 +71,4 @@ can add you as a contributer to the project.
 
 - 10se1ucgo and JiFish for creating the [cue_sdk](https://github.com/10se1ucgo/cue_sdk) Python wrapper which is used in 
 this project (Apache 2.0 License)
-- Logitech for providing [logiPy](https://github.com/Logitech/logiPy) on GitHub (MIT License)
 

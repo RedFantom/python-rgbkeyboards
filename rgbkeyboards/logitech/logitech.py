@@ -1,19 +1,43 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-from .logipy import logi_led as library
 from .keys import *
+from . import defs
 from pynput import keyboard as kb
+from ctypes import cdll, c_bool
+from platform import architecture
+import os
 
 
 class Logitech(object):
-    RGB_ST = library.LOGI_DEVICETYPE_RGB
-    RGB_PK = library.LOGI_DEVICETYPE_PERKEY_RGB
-    WHITE = library.LOGI_DEVICETYPE_MONOCHROME
+    RGB_ST = defs.LOGI_DEVICETYPE_RGB
+    RGB_PK = defs.LOGI_DEVICETYPE_PERKEY_RGB
+    WHITE = defs.LOGI_DEVICETYPE_MONOCHROME
 
-    def __init__(self):
-        if not library.logi_led_init():
-            raise ValueError("Logitech library could not be initialized")
+    def __init__(self, path="../sdsk/Logitech.dll", path64="../sdks/Logitech64.dll"):
+        self._path = path64 if int(architecture()[0][:2]) == 64 else path
+        if not os.path.exists(self._path):
+            raise FileNotFoundError
+        self._library = cdll.LoadLibrary(self._path)
+        self._library.LogiLedInit.restype = c_bool
+        self._library.LogiLedSetTargetDevice.restype = c_bool
+        self._library.LogiLedSaveCurrentLighting.restype = c_bool
+        self._library.LogiLedRestoreLighting.restype = c_bool
+        self._library.LogiLedSetLighting.restype = c_bool
+        self._library.LogiLedFlashLighting.restype = c_bool
+        self._library.LogiLedPulseLighting.restype = c_bool
+        self._library.LogiLedStopEffects.restype = c_bool
+        self._library.LogiledSetLightingForKeyWithScanCode.restype = c_bool
+        self._library.LogiLedSetLightingForKeyWithHidCode.restype = c_bool
+        self._library.LogiLedSetLightingForKeyWithQuartzCode.restype = c_bool
+        self._library.LogiLedSetLightingForKeyWithKeyName.restype = c_bool
+        self._library.LogiLedSaveLightingForKey.restype = c_bool
+        self._library.LogiLedRestoreLightingForKey.restype = c_bool
+        self._library.LogiLedFlashLighting.restype = c_bool
+        self._library.LogiLedPulseLighting.restype = c_bool
+        self._library.LogiLedStopEffectsOnKey.restype = c_bool
+        self._library.LogiLedShutdown.restype = c_bool
+        # self._library.LogiLedGetSdkVersion
         self._callback = None
         self._listener = None
 
@@ -21,44 +45,38 @@ class Logitech(object):
     def get_brand():
         return "logitech"
 
-    @staticmethod
-    def get_version():
-        return library.get_sdk_version()
+    def get_version(self):
+        return self._library.get_sdk_version()
 
     @staticmethod
     def get_layout():
+        """
+        Not available for the LogiLed SDK, but gracefully returns 0
+        :return:
+        """
         return 0
 
-    @staticmethod
-    def get_device_available():
-        return True
+    def get_device_available(self):
+        return self._library.LogiLedInit()
 
-    @staticmethod
-    def set_control_device(device_type):
+    def set_control_device(self, device_type):
         if not isinstance(device_type, int):
             raise ValueError("Parameter is not of int type")
         if not device_type == Logitech.RGB_ST or not device_type == Logitech.RGB_PK or \
            not device_type == Logitech.WHITE:
             raise ValueError("Parameter is not a valid device type")
-        return library.logi_led_set_target_device(device_type)
+        self._library.LogiLedSetTargetDevice(device_type)
 
-    @staticmethod
-    def set_led_control_enabled():
-        """
-        Funtion is not required for Logitech SDK
-        :return: True
-        """
-        return True
+    def set_led_control_enabled(self):
+        return self._library.LogiLedInit()
 
-    @staticmethod
-    def set_full_led_color(r, g, b):
+    def set_full_led_color(self, r, g, b):
         r = int(r / 255 * 100)
         g = int(g / 255 * 100)
         b = int(b / 255 * 100)
-        library.logi_led_set_lighting(r, g, b)
+        self._library.LogiLedSetLighting(r, g, b)
 
-    @staticmethod
-    def set_ind_led_color(leds):
+    def set_ind_led_color(self, leds):
         if not isinstance(leds, dict):
             raise ValueError("Parameter leds is not a dictionary")
         for key, value in leds.items():
@@ -74,7 +92,9 @@ class Logitech(object):
             keycode = keys[key]
             if not keycode:
                 continue
-            library.logi_led_set_lighting_for_key_with_scan_code(keycode, r, g, b)
+            return_value = self._library.LogiledSetLightingForKeyWithScanCode(keycode, r, g, b)
+            if not return_value:
+                raise Exception("Failed to set lighting for {0}".format(key))
         return True
 
     def set_key_callback(self, callback):
@@ -95,7 +115,7 @@ class Logitech(object):
             return
 
     def close(self):
-        self.__exit__()
+        self._library.LogiLedShutdown()
 
     def __exit__(self):
-        library.logi_led_shutdown()
+        self.close()
