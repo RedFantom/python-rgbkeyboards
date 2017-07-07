@@ -8,7 +8,7 @@ from cue_sdk.enumerations import *
 from pynput import keyboard as kb
 from .keys import *
 from ..utilities import get_dll_path
-from ..keyboards import Keyboard
+from ..keyboard import Keyboard
 
 
 class Corsair(Keyboard):

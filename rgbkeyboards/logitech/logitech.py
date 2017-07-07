@@ -8,8 +8,7 @@ from ctypes import cdll, c_bool
 from platform import architecture
 import os
 from ..utilities import get_dll_path
-from ..keyboards import Keyboard
-
+from ..keyboard import Keyboard
 
 class Logitech(Keyboard):
     RGB_ST = defs.LOGI_DEVICETYPE_RGB
@@ -17,7 +16,6 @@ class Logitech(Keyboard):
     WHITE = defs.LOGI_DEVICETYPE_MONOCHROME
 
     def __init__(self, path=get_dll_path("Logitech.dll"), path64=get_dll_path("Logitech64.dll")):
-        Keyboard.__init__(self)
         self._path = path64 if int(architecture()[0][:2]) == 64 else path
         if not os.path.exists(self._path):
             raise FileNotFoundError

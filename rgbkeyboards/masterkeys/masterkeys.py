@@ -6,7 +6,7 @@ from ctypes import cdll
 from .keys import *
 import platform
 from ..utilities import get_dll_path
-from ..keyboards import Keyboard
+from ..keyboard import Keyboard
 
 
 class MasterKeys(Keyboard):
@@ -74,7 +74,6 @@ class MasterKeys(Keyboard):
         so they can be directly read by the Python function calling the C function. Does not change the working
         directory of the program to load the library.
         """
-        Keyboard.__init__(self)
         if int(platform.architecture()[0][:2]) == 64:
             self.library = cdll.LoadLibrary(path64)
         else:
