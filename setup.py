@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
     name="rgbkeyboards",
     packages=["rgbkeyboards"],
-    version="0.1.3",
+    version="0.2.0",
     description="A library to control RGB Keyboards on Windows",
     author="RedFantom",
     url="https://www.github.com/RedFantom/python-rgb-keyboards",
