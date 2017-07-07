@@ -8,14 +8,16 @@ from ctypes import cdll, c_bool
 from platform import architecture
 import os
 from ..utilities import get_dll_path
+from ..keyboards import Keyboard
 
 
-class Logitech(object):
+class Logitech(Keyboard):
     RGB_ST = defs.LOGI_DEVICETYPE_RGB
     RGB_PK = defs.LOGI_DEVICETYPE_PERKEY_RGB
     WHITE = defs.LOGI_DEVICETYPE_MONOCHROME
 
     def __init__(self, path=get_dll_path("Logitech.dll"), path64=get_dll_path("Logitech64.dll")):
+        Keyboard.__init__(self)
         self._path = path64 if int(architecture()[0][:2]) == 64 else path
         if not os.path.exists(self._path):
             raise FileNotFoundError
@@ -49,8 +51,7 @@ class Logitech(object):
     def get_version(self):
         return self._library.get_sdk_version()
 
-    @staticmethod
-    def get_layout():
+    def get_layout(self):
         """
         Not available for the LogiLed SDK, but gracefully returns 0
         :return:
@@ -68,7 +69,9 @@ class Logitech(object):
             raise ValueError("Parameter is not a valid device type")
         self._library.LogiLedSetTargetDevice(device_type)
 
-    def set_led_control_enabled(self):
+    def set_led_control_enabled(self, enabled=True):
+        if not enabled:
+            return False
         return self._library.LogiLedInit()
 
     def set_full_led_color(self, r, g, b):

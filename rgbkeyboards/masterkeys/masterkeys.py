@@ -6,9 +6,10 @@ from ctypes import cdll
 from .keys import *
 import platform
 from ..utilities import get_dll_path
+from ..keyboards import Keyboard
 
 
-class MasterKeys(object):
+class MasterKeys(Keyboard):
     """
     This class provides a wrapper around the Cooler Master MasterKeys and MasterMouse SDK that is freely available to
     everyone. The SDK files have been included in this repository in the folder `masterkeys`, and they are required for
@@ -73,6 +74,7 @@ class MasterKeys(object):
         so they can be directly read by the Python function calling the C function. Does not change the working
         directory of the program to load the library.
         """
+        Keyboard.__init__(self)
         if int(platform.architecture()[0][:2]) == 64:
             self.library = cdll.LoadLibrary(path64)
         else:

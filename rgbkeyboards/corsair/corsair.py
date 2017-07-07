@@ -8,15 +8,17 @@ from cue_sdk.enumerations import *
 from pynput import keyboard as kb
 from .keys import *
 from ..utilities import get_dll_path
+from ..keyboards import Keyboard
 
 
-class Corsair(object):
+class Corsair(Keyboard):
     """
     This class provides a wrapper around the Corsair CUE SDK that is provided freely to everyone as described in
     README.md of the corsair folder in this repository.
     """
 
     def __init__(self, path=get_dll_path("Corsair.dll"), path64=get_dll_path("Corsair64.dll")):
+        Keyboard.__init__(self)
         if int(platform.architecture()[0][:2]) == 64:
             self.library = CUESDK(path)
         else:
