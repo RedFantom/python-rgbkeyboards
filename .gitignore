@@ -88,5 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# PyCharm
 .idea/
-*.dll
+rgbkeyboards/sdks/*.dll
