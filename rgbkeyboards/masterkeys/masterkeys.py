@@ -213,38 +213,6 @@ class MasterKeys(Keyboard):
             self.library.SetLedColor(row, column, r, g, b)
         return True
 
-    def set_key_callback(self, callback):
-        """
-        Set callback for when key is pressed. The callback must take the following arguments:
-            str keyname, bool pressed
-        :param callback: Callable Python object
-        :return: None
-        """
-        self.callback = callback
-        parameter = self.callback_type(self.callback_wrapper)
-        self.library.SetKeyCallBack(parameter)
-
-    def enable_key_callback(self, enable=True):
-        """
-        Enable the key callback when enable is True, disable when enable is False
-        :param enable: bool
-        :return: bool, True if successful
-        """
-        return self.library.EnableKeyInterrupt(enable)
-
-    def callback_wrapper(self, row, column, pressed):
-        """
-        Wrapper around the callback so the name of the is returned and not the coordinates of the key, which may differ
-        per keyboard.
-        :param row: y coordinate, int
-        :param column: x coordinate, int
-        :param pressed: bool
-        :return: None, calls specified callback
-        """
-        coordinates = (row, column)
-        keyname = list(self.layout.keys())[list(self.layout.values()).index(coordinates)]
-        self.callback(keyname, pressed)
-
     """
     The following functions are brand specific and might not be available on all keyboards. Please only use these
     functions if your are targeting a specific brand or keyboard. You can do this by letting the user enter their

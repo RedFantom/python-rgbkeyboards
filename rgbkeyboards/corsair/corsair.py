@@ -5,7 +5,6 @@ import platform
 from cue_sdk.api import *
 from cue_sdk.structures import *
 from cue_sdk.enumerations import *
-from pynput import keyboard as kb
 from .keys import *
 from ..utilities import get_dll_path
 from ..keyboard import Keyboard
@@ -63,10 +62,9 @@ class Corsair(Keyboard):
         return bool(self.library.get_device_info())
 
     @staticmethod
-    def set_control_device(device_type=0):
+    def set_control_device(*args):
         """
         Function not required for Corsair keyboards
-        :param device_type: int device type
         :return: True
         """
         return True
@@ -128,35 +126,6 @@ class Corsair(Keyboard):
             (r, g, b) = value
             parameter.append(CorsairLedColor(keys[key], r, g, b))
         return self.library.set_led_colors(parameter)
-
-    def set_key_callback(self, callback):
-        """
-        Set the callback for when a key is pressed
-        :param callback: callable object to be called upon keypress with parameters
-        :return: None
-        """
-        if not callable(callback):
-            raise ValueError("Parameter callback passed not callable")
-        self._callback = callback
-        self._listener = kb.Listener(on_press=self._callback)
-
-    def enable_key_callback(self, enable=True):
-        """
-        Enables the key callback set with set_key_callback
-        :param enable: enables if True, disables if False
-        :return: None
-        """
-        if not self._callback or not callable(self._callback):
-            raise ValueError("Callback not set. Please use set_key_callback")
-        if not self._listener or not isinstance(self._listener, kb.Listener):
-            raise ValueError("Callback set but listener not found")
-        if enable:
-            self._listener.start()
-        else:
-            self._listener.stop()
-            while self._listener.is_alive():
-                pass
-            return
 
     """
     The following functions are brand specific and might not be available on all keyboards. Please only use these

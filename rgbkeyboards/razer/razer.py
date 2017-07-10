@@ -58,12 +58,6 @@ class Razer(Keyboard):
     def set_ind_led_color(self, leds):
         return
 
-    def set_key_callback(self, callback):
-        return
-
-    def enable_key_callback(self, enable=True):
-        return
-
     def close(self):
         self._library.UnInit()
         self.__init = False

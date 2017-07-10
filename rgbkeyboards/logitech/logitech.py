@@ -3,12 +3,12 @@
 # For license see LICENSE
 from .keys import *
 from . import defs
-from pynput import keyboard as kb
 from ctypes import cdll, c_bool
 from platform import architecture
 import os
 from ..utilities import get_dll_path
 from ..keyboard import Keyboard
+
 
 class Logitech(Keyboard):
     RGB_ST = defs.LOGI_DEVICETYPE_RGB
@@ -98,23 +98,6 @@ class Logitech(Keyboard):
             if not return_value:
                 raise Exception("Failed to set lighting for {0}".format(key))
         return True
-
-    def set_key_callback(self, callback):
-        self._callback = callback
-        self._listener = kb.Listener(on_press=self._callback)
-
-    def enable_key_callback(self, enable=True):
-        if not self._callback or not callable(self._callback):
-            raise ValueError("Callback not set. Please use set_key_callback")
-        if not self._listener or not isinstance(self._listener, kb.Listener):
-            raise ValueError("Callback set but listener not found")
-        if enable:
-            self._listener.start()
-        else:
-            self._listener.stop()
-            while self._listener.is_alive():
-                pass
-            return
 
     def close(self):
         self._library.LogiLedShutdown()

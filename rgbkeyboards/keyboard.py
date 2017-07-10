@@ -28,12 +28,3 @@ class Keyboard(object):
 
     def set_ind_led_color(self, leds):
         raise NotImplementedError
-
-    def set_key_callback(self, callback):
-        raise NotImplementedError
-
-    def enable_key_callback(self, enable=True):
-        raise NotImplementedError
-
-    def disable_key_callback(self):
-        self.enable_key_callback(enable=False)
