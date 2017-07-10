@@ -19,9 +19,9 @@ class Corsair(Keyboard):
     def __init__(self, path=get_dll_path("Corsair.dll"), path64=get_dll_path("Corsair64.dll")):
         Keyboard.__init__(self)
         if int(platform.architecture()[0][:2]) == 64:
-            self.library = CUESDK(path)
-        else:
             self.library = CUESDK(path64)
+        else:
+            self.library = CUESDK(path)
         self._callback = None
         self._listener = None
 
