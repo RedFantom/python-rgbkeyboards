@@ -28,7 +28,7 @@ class Logitech(Keyboard):
         self._library.LogiLedFlashLighting.restype = c_bool
         self._library.LogiLedPulseLighting.restype = c_bool
         self._library.LogiLedStopEffects.restype = c_bool
-        self._library.LogiledSetLightingForKeyWithScanCode.restype = c_bool
+        self._library.LogiLedSetLightingForKeyWithScanCode.restype = c_bool
         self._library.LogiLedSetLightingForKeyWithHidCode.restype = c_bool
         self._library.LogiLedSetLightingForKeyWithQuartzCode.restype = c_bool
         self._library.LogiLedSetLightingForKeyWithKeyName.restype = c_bool
@@ -47,7 +47,7 @@ class Logitech(Keyboard):
         return "logitech"
 
     def get_version(self):
-        return self._library.get_sdk_version()
+        return self._library.LogiLedGetSdkVersion()
 
     def get_layout(self):
         """
@@ -62,7 +62,7 @@ class Logitech(Keyboard):
     def set_control_device(self, device_type):
         if not isinstance(device_type, int):
             raise ValueError("Parameter is not of int type")
-        if not device_type == Logitech.RGB_ST or not device_type == Logitech.RGB_PK or \
+        if not device_type == Logitech.RGB_ST and not device_type == Logitech.RGB_PK and \
            not device_type == Logitech.WHITE:
             raise ValueError("Parameter is not a valid device type")
         self._library.LogiLedSetTargetDevice(device_type)
@@ -94,9 +94,9 @@ class Logitech(Keyboard):
             keycode = keys[key]
             if not keycode:
                 continue
-            return_value = self._library.LogiledSetLightingForKeyWithScanCode(keycode, r, g, b)
+            return_value = self._library.LogiLedSetLightingForKeyWithScanCode(keycode, r, g, b)
             if not return_value:
-                raise Exception("Failed to set lighting for {0}".format(key))
+                return False
         return True
 
     def close(self):
