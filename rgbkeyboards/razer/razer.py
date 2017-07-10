@@ -1,11 +1,9 @@
 # Python RGB Keyboards, Copyright (C) 2017 by RedFantom
 # All additions are under the copyright of their respective authors
 # For license see LICENSE
-from ctypes import c_bool, c_int, c_void_p
-from ctypes import cdll
-import platform
-from ..utilities import get_dll_path
 from ..keyboard import Keyboard
+from ..sdks import ChromaPy as chroma
+from .keys import keys
 
 
 class Razer(Keyboard):
@@ -17,13 +15,9 @@ class Razer(Keyboard):
     EFF_WAVE = 6
     EFF_SPECTRUM = 5
 
-    def __init__(self, path=get_dll_path("Razer.dll"), path64=get_dll_path("Razer64.dll")):
-        if int(platform.architecture()[0][:2]) == 64:
-            self._library = cdll.LoadLibrary(path64)
-        else:
-            self._library = cdll.LoadLibrary(path)
-        self._library.CreateKeyboardEffect.argtypes = [c_int]
+    def __init__(self):
         self.__init = False
+        self._library = chroma.Keyboard()
 
     @staticmethod
     def get_brand():
@@ -36,7 +30,7 @@ class Razer(Keyboard):
         return 0
 
     def get_device_available(self):
-        return self.__init
+        return bool(chroma.getConnectedDevices())
 
     def set_control_device(self, device_type=0):
         if self.__init:
@@ -45,21 +39,22 @@ class Razer(Keyboard):
             return False
 
     def set_led_control_enabled(self, enable=True):
-        if enable:
-            self._library.Init()
-            self.__init = True
-        else:
-            self._library.UnInit()
-            self.__init = False
+        return True
 
     def set_full_led_color(self, r, g, b):
-        return
+        return self._library.setColor((r, g, b))
 
     def set_ind_led_color(self, leds):
-        return
+        for led, value in leds:
+            try:
+                self._library.setbyGrid(keys[led][value])
+            except KeyError:
+                raise ValueError("This key is not valid for this keyboard: {0}".format(led))
+            except SyntaxError:
+                pass
+        return self._library.applyEffectKeyboard()
 
     def close(self):
-        self._library.UnInit()
         self.__init = False
 
     def __exit__(self):
