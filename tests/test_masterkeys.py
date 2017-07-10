@@ -54,3 +54,7 @@ class TestMasterKeys(unittest.TestCase):
 
     def tearDown(self):
         self.assertTrue(self.masterkeys.set_led_control_enabled(False))
+
+
+if __name__ == '__main__':
+    unittest.main()
