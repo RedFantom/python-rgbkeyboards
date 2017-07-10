@@ -29,11 +29,6 @@ class TestMasterKeys(unittest.TestCase):
         self.assertTrue(self.masterkeys.set_led_control_enabled(True))
         self.assertTrue(self.masterkeys.set_full_led_color(255, 255, 255))
 
-    def test_callback_functions(self):
-        self.masterkeys.set_key_callback(self.callback)
-        self.assertTrue(self.masterkeys.enable_key_callback())
-        self.assertTrue(self.masterkeys.enable_key_callback(False))
-
     def test_set_ind_led_color(self):
         self.masterkeys.set_control_device(MasterKeys.RGB_L)
         self.masterkeys.set_led_control_enabled(True)
@@ -59,7 +54,3 @@ class TestMasterKeys(unittest.TestCase):
 
     def tearDown(self):
         self.assertTrue(self.masterkeys.set_led_control_enabled(False))
-
-    @staticmethod
-    def callback(*args):
-        pass
