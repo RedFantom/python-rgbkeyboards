@@ -244,7 +244,6 @@ class MasterKeys(Keyboard):
         return self.library.SwitchLedEffect(effect)
 
     def __exit__(self):
-        self.enable_key_callback(False)
         self.set_led_control_enabled(False)
 
     def close(self):
