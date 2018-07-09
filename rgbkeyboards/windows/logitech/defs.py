@@ -1,6 +1,7 @@
 """
-DLL Definitions taken from the LogiPy Python package under the MIT License
+DLL Definitions taken from the LogiPy Python package
 
+License: MIT License
 Copyright (C) 2011-2015 Logitech
 """
 ESC = 0x01

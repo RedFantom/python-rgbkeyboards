@@ -1,44 +1,25 @@
-# Python RGB Keyboards, Copyright (C) 2017 by RedFantom
-# All additions are under the copyright of their respective authors
-# For license see LICENSE
+""" Author: RedFantom License: GNU GPLv3 Copyright (c) 2017-2018 RedFantom """
 import platform
 from cue_sdk.api import *
 from cue_sdk.structures import *
 from cue_sdk.enumerations import *
 from .keys import *
-from ..utilities import get_dll_path
-from ..keyboard import Keyboard
+from rgbkeyboards.utilities import get_dll_path
 
 
-class Corsair(Keyboard):
+class Keyboard(object):
     """
     This class provides a wrapper around the Corsair CUE SDK that is provided freely to everyone as described in
     README.md of the corsair folder in this repository.
     """
 
     def __init__(self, path=get_dll_path("Corsair.dll"), path64=get_dll_path("Corsair64.dll")):
-        Keyboard.__init__(self)
         if int(platform.architecture()[0][:2]) == 64:
             self.library = CUESDK(path64, silence_errors=True)
         else:
             self.library = CUESDK(path, silence_errors=True)
         self._callback = None
         self._listener = None
-
-    @staticmethod
-    def get_brand():
-        """
-        Returns the brand of the keyboard in use for the universal classes
-        :return: string of brand
-        """
-        return "corsair"
-
-    def get_version(self):
-        """
-        Returns the version of the SDK that is loaded, does require a keyboard to be set up
-        :return: str version
-        """
-        return self.library.perform_protocol_handshake().sdk_ver
 
     def get_layout(self):
         """

@@ -1,6 +1,8 @@
-# Python RGB Keyboards, Copyright (C) 2017 by RedFantom
-# All additions are under the copyright of their respective authors
-# For license see LICENSE
+"""
+Author: RedFantom
+License: GNU GPLv3
+Copyright (c) 2017-2018 RedFantom
+"""
 from .defs import *
 
 keys = {
