@@ -4,11 +4,11 @@ License: GNU GPLv3
 Copyright (c) 2017-2018 RedFantom
 """
 # Standard Library
-from collections import namedtuple
 from platform import architecture
 import sys
 # Project Modules
-from rgbkeyboards.utilities import get_dll_path
+from rgbkeyboards.utilities import \
+    WINDOWS, LINUX, get_dll_path, get_device_list
 
 
 PATHS = {
@@ -44,8 +44,7 @@ BACKENDS = {
     }
 }
 
-
-Device = namedtuple("Device", ["vendor", "product"])
+VENDORS = list(BACKENDS[WINDOWS].keys())
 
 
 class Keyboards(object):
@@ -55,15 +54,6 @@ class Keyboards(object):
     Uses HID device interface libraries to detect devices and choose the
     correct back-end based on platform and product manufacturer.
     """
-
-    WINDOWS = "windows"
-    LINUX = "linux"
-
-    VENDORS = [
-        "Cooler Master Technology Inc.",
-        "Corsair",
-        "Logitech, Inc."
-    ]
 
     def __init__(self, paths=PATHS):
         """
@@ -77,49 +67,29 @@ class Keyboards(object):
     def platform(self):
         """Return a proper platform string across Python versions"""
         if sys.platform == "win32":
-            return Keyboards.WINDOWS
+            return WINDOWS
         elif "linux" in sys.platform:
-            return Keyboards.LINUX
+            return LINUX
         raise RuntimeError(
             "Unsupported platform detected: {}".format(sys.platform))
 
     def detect_devices(self):
         """Detect devices using either the Windows or Linux backend"""
-        device_list = list()
-
-        def process(vendor, product):
-            if vendor not in self.VENDORS or vendor is None:
-                return
-            device = Device(vendor, product)
-            if device in device_list:
-                return
-            device_list.append(device)
-
-        # Windows
-        if self.platform is Keyboards.WINDOWS:
-            from pywinusb import hid
-            devices = hid.HidDeviceFilter().get_devices()
-            for device in devices:
-                if not isinstance(device, hid.HidDevice):
-                    continue
-                vendor, product = device.vendor_name, device.product_name
-                process(vendor, product)
-
-        # Linux
-        elif self.platform is Keyboards.LINUX:
-            import usb.core
-            devices = usb.core.find(find_all=True)
-            for device in devices:
-                try:
-                    vendor, product = device.manufacturer, device.product
-                except ValueError:
-                    continue
-                process(vendor, product)
-
-        return device_list
+        devices = get_device_list(VENDORS)
+        for device in devices.copy():
+            backend = self.get_backend(device)
+            if backend is None:
+                devices.remove(device)
+                continue
+            _, product = device
+            if not backend.is_product_supported(product):
+                devices.remove(device)
+        return devices
 
     def get_backend(self, device):
         """Return the proper backend Keyboard class for a given device"""
+        if device.vendor not in BACKENDS[self.platform]:
+            return None
         module = BACKENDS[self.platform][device.vendor]
         try:
             exec("from {} import Keyboard".format(module))

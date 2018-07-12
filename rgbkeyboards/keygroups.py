@@ -15,7 +15,7 @@ functionkeys = ["F{}".format(i) for i in range(1, 13)]
 modifiers = [
     'capslock', 'enter', 'shift_l', 'shift_r', 'ctrl_l', 'win_l',
     'alt_l', 'alt_r', 'win_l', 'app', 'ctrl_r']
-keypad = [
+numpad = [
     'numlock', '(/)', '(*)', '(-)', '(7)', '(8)', '(9)', '(4)',
     '(5)', '(6)', '(+)', '(1)', '(2)', '(3)', '(enter)', '(0)',
     '(.)', '(00)'
@@ -67,4 +67,4 @@ pynput_rgb_keys = {
 pynput_rgb_keys.update({KeyCode(char=item): item for item in alphanumeric})
 
 if __name__ == '__main__':
-    print(len(alphanumeric) + len(functionkeys) + len(modifiers) + len(keypad) + len(controls))
+    print(len(alphanumeric) + len(functionkeys) + len(modifiers) + len(numpad) + len(controls))

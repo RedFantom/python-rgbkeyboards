@@ -44,16 +44,28 @@ TARGETS = {
 }
 
 
+DESCRIPTION = \
+    "This script can automatically download and extract the DLL files from\n" \
+    "the various SDK files for the different back-ends that this library\n" \
+    "supports on Windows. If you choose not to download these files, then\n" \
+    "downloading manually is required in order to use the back-ends\n" \
+    "that depend on their respective SDKs\n\n"
+
+
+INSTALL = \
+    "Would you like to download the SDK DLL files? (y/n) [y]: "
+
+
 DISCLAIMER = \
     "The SDK DLL files that are required for the various built-in back-ends\n" \
     "on Windows are each covered by its own License. The respective licenses\n" \
-    "can be found by downloading the ZIP files for which the links are present\n" \
-    "in these files and extracting them. Note that the licenses are\n" \
+    "can be found by downloading the ZIP files for which the links are\n" \
+    "present in these files and extracting them. Note that the licenses are\n" \
     "non-transferable, hence the need for this file in the first place.\n\n" \
     "The authors of this file will not accept any responsibility for your\n" \
     "agreement to any of these individual licenses and do not form a party\n" \
     "in the license agreement between you (or the organisation you\n" \
-    "represent) and the author of the SDK files.\n\n" \
+    "represent) and the author of the SDK files.\n\n"
 
 DISCLAIMER_PROMPT = \
     "Do you acknowledge that you have read the disclaimer and agree to\n" \
@@ -68,6 +80,10 @@ def printf(string, end="\n"):
 
 
 if __name__ == '__main__':
+    printf(DESCRIPTION)
+    a = input(INSTALL)
+    if a == "n":
+        exit()
     printf(DISCLAIMER)
     a = input(DISCLAIMER_PROMPT)
     if a != "y":

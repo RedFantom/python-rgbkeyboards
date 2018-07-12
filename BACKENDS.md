@@ -14,7 +14,7 @@ by the manufacturer of the keyboard. See the README file in the `sdks`
 folder in the package for more details.
 - `masterkeys`, Cooler Master MasterKeys keyboard back-end
 - `corsair`, Corsair keyboard back-end based on CUESDK
-- `logitech`
+- `logitech`, Logitech back-end, depends on Logitech Gaming Software
 
 ### Linux
 The Linux back-ends do not depend on files provided by the manufacturer,
@@ -23,7 +23,9 @@ as none of the manufacturers provide SDK files for Linux.
   Python MasterKeys module, built upon `libmk`
   
 ## Interface
-Each of the interfaces provides a single unified interface.
+Each of the interfaces provides a single unified interface. To ensure 
+the lowest possible latency, back-ends should not perform type checks
+on arguments.
 
 ```python
 class Keyboard:
@@ -37,10 +39,9 @@ class Keyboard:
     supported keyboard found should always be chosen as the controlled
     device (currently only one keyboard per machine is supported).
     
-    Functions should only raise errors when the arguments passed are 
-    invalid, or if not raising an error would hide something the user 
-    can influence from the user (like not having permission to access 
-    the device). Otherwise, the function results should indicate
+    Functions should only if not raising an error would hide something 
+    the user can influence from the user (like not having permission to 
+    access the device). Otherwise, the function results should indicate
     success or failure.
     """
     
@@ -50,6 +51,7 @@ class Keyboard:
             file location should be specified in `keyboards.py:PATHS`.
             If not required, should be omitted.
         """
+        self._control = False
         
     def get_device_available(self)->bool:
         """Return availability of any device supported by this back-end"""
@@ -72,6 +74,13 @@ class Keyboard:
         All keys not in the dictionary should remain the color they
         had been set to previously (unless the keyboard changes modes).
         """
+    
+    @staticmethod
+    def is_product_supported(iProduct):
+        """
+        Determine whether a product is supported by this back-end
+        :param iProduct: USB descriptor iProduct string
+        """
 ```
 
 ## Custom back-ends
@@ -84,3 +93,10 @@ platform_name: {
         full_python_module_import_name
 }
 ```
+
+If the back-end depends on an SDK or DLL file that has to be passed to
+the `__init__` function, the path should be specified in the `PATHS`
+dictionary in the `/keyboards.py` file.
+
+Both of these dictionaries are available through the `__init__.py` file
+for easier access to the backends.
