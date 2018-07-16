@@ -64,6 +64,8 @@ pynput_rgb_keys = {
     Key.f12: "F12",
 }
 
+all = alphanumeric + functionkeys + modifiers + numpad + controls
+
 pynput_rgb_keys.update({KeyCode(char=item): item for item in alphanumeric})
 
 if __name__ == '__main__':

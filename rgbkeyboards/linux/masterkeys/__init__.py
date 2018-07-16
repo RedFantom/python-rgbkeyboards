@@ -34,25 +34,23 @@ class Keyboard(BaseKeyboard):
 
     VENDOR = "Cooler Master Technology Inc."
 
-    def __init__(self):
+    def _setup_lib(self):
+        """Load masterkeys module and initialize required attributes"""
         import masterkeys as mk
         self._library = mk
-        self._control = False
         self._layout = None
         self._size = None
         self._lighting = mk.build_layout_list()
         global SUCCESS
         SUCCESS = mk.SUCCESS
 
-    def get_device_available(self):
+    def _get_device_available(self):
         """Return whether any supported device is available"""
         devices = self._library.detect_devices()
         return len(devices) != 0
 
-    def enable_control(self):
+    def _enable_control(self):
         """Enable control of the first keyboard detected"""
-        if self.get_device_available() is False:
-            return False
         devices = self._library.detect_devices()
         r = self._library.set_device(devices[0])
         if r != SUCCESS:
@@ -64,14 +62,12 @@ class Keyboard(BaseKeyboard):
         self._size, self._layout = self._get_layout()
         return True
 
-    def disable_control(self):
+    def _disable_control(self):
         """Disable control on the controlled keyboard"""
-        if self._control is False:
-            return True
         r = self._library.disable_control()
         if r != SUCCESS:
             return False
-        self._control, self._size, self._layout = False, None, None
+        self._size, self._layout = None, None
         return True
 
     def _get_layout(self):
@@ -81,11 +77,11 @@ class Keyboard(BaseKeyboard):
             return None, None
         return DEVICE_LAYOUTS[device]
 
-    def set_full_led_color(self, r, g, b):
+    def _set_full_led_color(self, r, g, b):
         """Set the color of LEDs on the keyboard"""
         return self._library.set_full_led_color(r, g, b)
 
-    def set_ind_led_color(self, leds):
+    def _set_ind_led_color(self, leds):
         """Set the color of individual LEDs"""
         if self._size is None or self._layout is None:
             device = self._library.get_device_ident()

@@ -79,7 +79,8 @@ def printf(string, end="\n"):
     sys.stdout.flush()
 
 
-if __name__ == '__main__':
+def download_dlls_verbose():
+    """Ask for confirmation before downloading the DLLs"""
     printf(DESCRIPTION)
     a = input(INSTALL)
     if a == "n":
@@ -88,7 +89,11 @@ if __name__ == '__main__':
     a = input(DISCLAIMER_PROMPT)
     if a != "y":
         exit()
+    download_dlls()
 
+
+def download_dlls():
+    """Download SDKs, extract DLL files and rename to be used"""
     for name, target in TARGETS.items():
 
         printf("Downloading files for target '{}'... ".format(name), end="")
@@ -111,3 +116,7 @@ if __name__ == '__main__':
                 rmtree(name)
         os.remove(file_name)
         printf("Done.")
+
+
+if __name__ == '__main__':
+    download_dlls_verbose()

@@ -39,14 +39,10 @@ class Keyboard(BaseKeyboard):
 
     VENDOR = "Logitech, Inc."
 
-    def __init__(self, path):
-        """
-        :param path: Full path to the library DLL file
-        """
+    def _setup_lib(self, path):
+        """Load and initialize library function from DLL"""
         self._library = lib = cdll.LoadLibrary(path)
-        self._control = False
         self._init = False
-
         # bool LogiLedInit()
         lib.LogiLedInit.restype = c_bool
         # bool LogiLedSetTargetDevice(int targetDevice)
@@ -62,7 +58,7 @@ class Keyboard(BaseKeyboard):
         # bool LogiLedShutdown()
         lib.LogiLedShutdown.restype = c_bool
 
-    def get_device_available(self):
+    def _get_device_available(self):
         """
         Return whether any supported device is connected
 
@@ -73,38 +69,22 @@ class Keyboard(BaseKeyboard):
         devices = get_device_list([Keyboard.VENDOR])
         if len(devices) == 0:
             return False
-        for device in devices:
-            _, product = device
-            if self.is_product_supported(product) is True:
-                return True
-        return False
+        return any(self.is_product_supported(product) for _, product in devices)
 
-    def enable_control(self, enabled=True):
+    def _enable_control(self):
         """Enable control by initializing LogiLed connection"""
-        if self._control is True:
-            return True  # Control already enabled
-        r = self._library.LogiLedInit()
-        if r is False:
-            return False
-        self._control = True
-        return True
+        return self._library.LogiLedInit()
 
-    def disable_control(self):
+    def _disable_control(self):
         """Disable control by closing the LogiLed connection"""
-        if self._control is False:
-            return True  # Control already disabled
-        r = self._library.LogiLedShutdown()
-        if r is False:
-            return False
-        self._control = False
-        return True
+        return self._library.LogiLedShutdown()
 
-    def set_full_led_color(self, r, g, b):
+    def _set_full_led_color(self, r, g, b):
         """Set the color of all the LEDs on the keyboard"""
         r, g, b = map(self._scale, (r, g, b))
-        self._library.LogiLedSetLighting(r, g, b)
+        return self._library.LogiLedSetLighting(r, g, b)
 
-    def set_ind_led_color(self, leds):
+    def _set_ind_led_color(self, leds):
         """
         Set the colors of individual LEDs on the keyboard
 

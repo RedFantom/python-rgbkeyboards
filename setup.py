@@ -3,24 +3,32 @@ Author: RedFantom
 License: GNU GPLv3
 Copyright (c) 2017-2018 RedFantom
 """
-from os import system, path
-from setuptools import setup
-from sys import platform, argv as args, executable
+from setuptools import setup, find_packages
+from setuptools.command.install import install
+from sys import platform
 
 if "win" in platform:
     requirements = ["cue_sdk", "pywinusb"]
-    if "install" in args:
-        script = path.join(path.dirname(path.abspath(__file__)),
-                           "rgbkeyboards", "sdks", "download.py")
-        system("{} {}".format(executable, script))
 elif "linux" in platform:
     requirements = ["masterkeys", "pyusb"]
 else:
     raise RuntimeError("Unsupported platform: {}".format(platform))
 
+
+class CustomInstall(install):
+    """Customized install to allow the user to download"""
+
+    def run(self, *args):
+        """Download the SDKs for the Windows back-ends if on Windows"""
+        if "win" in platform:
+            from rgbkeyboards.sdks.download import download_dlls
+            download_dlls()
+        install.run(self)
+
+
 setup(
     name="rgbkeyboards",
-    packages=["rgbkeyboards"],
+    packages=find_packages(),
     package_data={"rgbkeyboards": ["sdks/*.dll"]},
     version="0.2.1",
     description="A library to control RGB Keyboards",

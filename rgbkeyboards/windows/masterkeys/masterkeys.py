@@ -39,9 +39,9 @@ class Keyboard(BaseKeyboard):
         KBType.WHITE_S: S,
     }
 
-    def __init__(self, path):
+    def _setup_lib(self, path):
         """
-        Load the library and initialize the ctypes functions
+        Load and initialize the library functions from an SDK DLL file
         :param path: Valid path to the library DLL file to load
         """
         self.library = lib = cdll.LoadLibrary(path)
@@ -76,7 +76,6 @@ class Keyboard(BaseKeyboard):
 
         self._device = None
         self._layout = None
-        self._control = False
 
     def _get_layout(self):
         """
@@ -95,7 +94,7 @@ class Keyboard(BaseKeyboard):
         layout = LAYOUTS[Keyboard.KB_SIZES[self._device]][r]
         return layout
 
-    def get_device_available(self, type=False):
+    def _get_device_available(self, type=False):
         """Return the availability of any supported device"""
         for device in Keyboard.KBType:
             r = self.library.IsDevicePlug(device)
@@ -117,32 +116,23 @@ class Keyboard(BaseKeyboard):
             return False
         return True
 
-    def enable_control(self):
+    def _enable_control(self):
         """Enable control on the first available supported keyboard"""
-        if self._control is True:
-            return True
         r = self._set_control_device()
         if r is False:  # Not device available or set device failed
             return False
-        r = self.library.EnableLedControl(True, self._device)
-        if r is True:
-            self._control = True
-        return r
+        return self.library.EnableLedControl(True, self._device)
 
-    def disable_control(self):
+    def _disable_control(self):
         """Disable control on the currently controlled device"""
         if self._device is None:
             return False
-        if self._control is False:
-            return True
         r = self.library.EnableLedControl(False, self._device)
-        if r is False:
-            return False
-        self._device = None
-        self._control = False
-        return True
+        if r is True:
+            self._device = None
+        return r
 
-    def set_full_led_color(self, r, g, b):
+    def _set_full_led_color(self, r, g, b):
         """
         Sets the color of all keyboard LEDs using one function
 
@@ -150,10 +140,10 @@ class Keyboard(BaseKeyboard):
         specified.
         """
         if self._device is None:
-            return
+            return False
         return self.library.SetFullLedColor(r, g, b, self._device)
 
-    def set_ind_led_color(self, leds):
+    def _set_ind_led_color(self, leds):
         """
         Set the color of an individual keyboard LED
 
@@ -167,7 +157,9 @@ class Keyboard(BaseKeyboard):
                 continue
             row, column = self._layout[key]
             r, g, b = value
-            self.library.SetLedColor(row, column, r, g, b, self._device)
+            r = self.library.SetLedColor(row, column, r, g, b, self._device)
+            if r is False:
+                return False
         return True
 
     @staticmethod
