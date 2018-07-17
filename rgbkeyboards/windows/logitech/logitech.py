@@ -79,12 +79,12 @@ class Keyboard(BaseKeyboard):
         """Disable control by closing the LogiLed connection"""
         return self._library.LogiLedShutdown()
 
-    def _set_full_led_color(self, r, g, b):
+    def _set_full_color(self, r, g, b):
         """Set the color of all the LEDs on the keyboard"""
         r, g, b = map(self._scale, (r, g, b))
         return self._library.LogiLedSetLighting(r, g, b)
 
-    def _set_ind_led_color(self, leds):
+    def _set_ind_color(self, leds):
         """
         Set the colors of individual LEDs on the keyboard
 

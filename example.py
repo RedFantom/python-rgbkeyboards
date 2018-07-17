@@ -14,6 +14,6 @@ if __name__ == '__main__':
         print("No valid back-end")
         exit()
     kb.enable_control()
-    kb.set_ind_led_color(keys)
+    kb.set_ind_color(keys)
     sleep(1)
     kb.disable_control()

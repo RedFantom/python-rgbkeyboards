@@ -37,12 +37,12 @@ class Keyboard(BaseKeyboard):
         """Disable exclusive lighting control for controlled keyboard"""
         return self._library.release_control(CAM.ExclusiveLightingControl)
 
-    def _set_full_led_color(self, r, g, b):
+    def _set_full_color(self, r, g, b):
         """Set the color of all the LEDs on the controlled keyboard"""
         return self._library.set_led_colors(
             [CorsairLedColor(i, r, g, b) for i in keys.values()])
 
-    def _set_ind_led_color(self, leds):
+    def _set_ind_color(self, leds):
         """
         Sets the colors of individual LEDs by keyname
         :param leds: dictionary with keynames as key and tuples (r, g, b) as values

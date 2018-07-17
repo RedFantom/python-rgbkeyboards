@@ -28,15 +28,15 @@ class TestKeyboards(TestCase):
         self.assertIsInstance(r, bool)
         self.assertTrue(r)
 
-    def test_set_full_led_color(self):
+    def test_set_full_color(self):
         self.kb.enable_control()
-        r = self.kb.set_full_led_color(255, 255, 0)
+        r = self.kb.set_full_color(255, 255, 0)
         self.assertIsInstance(r, bool)
         self.assertTrue(r)
 
-    def test_set_ind_led_color(self):
+    def test_set_ind_color(self):
         self.kb.enable_control()
-        r = self.kb.set_ind_led_color({"esc": (0, 255, 0)})
+        r = self.kb.set_ind_color({"esc": (0, 255, 0)})
         self.assertIsInstance(r, bool)
         self.assertTrue(r)
 

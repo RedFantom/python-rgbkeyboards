@@ -132,7 +132,7 @@ class Keyboard(BaseKeyboard):
             self._device = None
         return r
 
-    def _set_full_led_color(self, r, g, b):
+    def _set_full_color(self, r, g, b):
         """
         Sets the color of all keyboard LEDs using one function
 
@@ -143,7 +143,7 @@ class Keyboard(BaseKeyboard):
             return False
         return self.library.SetFullLedColor(r, g, b, self._device)
 
-    def _set_ind_led_color(self, leds):
+    def _set_ind_color(self, leds):
         """
         Set the color of an individual keyboard LED
 

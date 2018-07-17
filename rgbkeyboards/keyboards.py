@@ -94,7 +94,7 @@ class Keyboards(object):
         try:
             exec("from {} import Keyboard".format(module))
         except ImportError as e:
-            raise RuntimeError("Failed to load back-end {}".format(module)) from e
+            raise RuntimeError("Failed to load back-end {}".format(module))
         return locals()["Keyboard"]
 
     @property

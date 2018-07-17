@@ -5,6 +5,7 @@ Copyright (c) 2017-2018 RedFantom
 """
 # Standard Library
 from threading import Lock
+from rgbkeyboards._queue import Queue
 
 
 class BaseKeyboard(object):
@@ -23,6 +24,7 @@ class BaseKeyboard(object):
     def __init__(self, *args):
         """Initialize attributes and properties"""
         self._lock = Lock()
+        self._effect_queue = Queue()
         self._control = False
         # Back-end defined
         self._setup_lib(*args)
@@ -33,7 +35,7 @@ class BaseKeyboard(object):
             return True
         if self.get_device_available() is False:
             return False
-        r = self._exec_func(self._enable_control())
+        r = self._exec_func(self._enable_control)
         if r is True:
             self._control = True
         return r
@@ -47,16 +49,16 @@ class BaseKeyboard(object):
             self._control = False
         return r
 
-    def set_full_led_color(self, r, g, b):
+    def set_full_color(self, r, g, b):
         """Set the keyboard of all the LEDs of the keyboard"""
         assert self._control, "Control is not enabled"
         assert all(isinstance(v, int) for v in (r, g, b)), \
             "Not all arguments are of int type"
         assert all(-1 < v < 256 for v in (r, g, b)), \
             "Not all arguments are in byte range"
-        return self._exec_func(self._set_full_led_color, r, g, b)
+        return self._exec_func(self._set_full_color, r, g, b)
 
-    def set_ind_led_color(self, keys):
+    def set_ind_color(self, keys):
         """Set the color of all LEDs on the keyboard individually"""
         assert isinstance(keys, dict), "param keys is not a dictionary"
         assert all(isinstance(value, tuple) for value in keys.values()), \
@@ -64,7 +66,7 @@ class BaseKeyboard(object):
         assert all(isinstance(key, str) for key in keys.keys()), \
             "keys dict does not contain only str keys"
         assert self._control is True, "Control is not enabled"
-        return self._exec_func(self._set_ind_led_color, keys)
+        return self._exec_func(self._set_ind_color, keys)
 
     def get_device_available(self, *args):
         """Return whether a supported device is available"""
@@ -75,14 +77,13 @@ class BaseKeyboard(object):
         if self.get_device_available() is False:
             raise RuntimeError("No available device found")
         self.enable_control()
-
         if self._control is False:
             raise RuntimeError("Failed to enable control on keyboard")
         return self
 
     def __exit__(self, *args):
         """Disable control at end of with-clause"""
-        if self._control:
+        if self._control is False:
             return
         self.disable_control()
 
@@ -128,7 +129,7 @@ class BaseKeyboard(object):
         """
         raise NotImplementedError()
 
-    def _set_ind_led_color(self, keys):
+    def _set_ind_color(self, keys):
         """
         Set the color of individual keys on the keyboard
 
@@ -140,11 +141,11 @@ class BaseKeyboard(object):
         """
         raise NotImplementedError()
 
-    def _set_full_led_color(self, r, g, b):
+    def _set_full_color(self, r, g, b):
         """
         Set the color of all LEDs available on the keyboard
 
-        May override all colors set using _set_ind_led_color, or even
+        May override all colors set using _set_ind_color, or even
         put the keyboard in an entirely different lighting mode. Should
         be optimized for a low-latency approach.
         :param r, g, b: RGB color tuple values

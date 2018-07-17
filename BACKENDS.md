@@ -43,6 +43,10 @@ class Keyboard:
     the user can influence from the user (like not having permission to 
     access the device). Otherwise, the function results should indicate
     success or failure.
+    
+    Note that thread-safety is not required of back-end implementations:
+    the BaseKeyboard functions wrap the back-end functions in 
+    thread-safe Lock mechanisms.
     """
     
     def __init__(self, path):
@@ -53,19 +57,19 @@ class Keyboard:
         """
         self._control = False
         
-    def get_device_available(self)->bool:
+    def _get_device_available(self)->bool:
         """Return availability of any device supported by this back-end"""
         
-    def enable_control(self)->bool:
+    def _enable_control(self)->bool:
         """Enable the control of the first supported keyboard available"""
     
-    def disable_control(self)->bool:
+    def _disable_control(self)->bool:
         """Disable the control on the controlled keyboard"""
         
-    def set_full_led_color(self, r: int, g: int, b: int)->bool:
+    def _set_full_color(self, r: int, g: int, b: int)->bool:
         """Set the color of the whole keyboard to a single color tuple"""
         
-    def set_ind_led_color(self, leds: dict)->bool:
+    def _set_ind_color(self, leds: dict)->bool:
         """
         Set the color of all individual LEDs based on a dictionary
         

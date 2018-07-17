@@ -77,11 +77,11 @@ class Keyboard(BaseKeyboard):
             return None, None
         return DEVICE_LAYOUTS[device]
 
-    def _set_full_led_color(self, r, g, b):
+    def _set_full_color(self, r, g, b):
         """Set the color of LEDs on the keyboard"""
         return self._library.set_full_led_color(r, g, b)
 
-    def _set_ind_led_color(self, leds):
+    def _set_ind_color(self, leds):
         """Set the color of individual LEDs"""
         if self._size is None or self._layout is None:
             device = self._library.get_device_ident()
