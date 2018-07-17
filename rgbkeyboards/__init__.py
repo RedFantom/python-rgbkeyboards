@@ -1,5 +1,10 @@
-from .keyboards import Keyboards
-from .keygroups import keypad, functionkeys, alphanumeric, modifiers, controls, pynput_rgb_keys
-from .masterkeys.masterkeys import MasterKeys
-from .corsair.corsair import Corsair
-from .logitech.logitech import Logitech
+"""
+Author: RedFantom
+License: GNU GPLv3
+Copyright (c) 2017-2018 RedFantom
+"""
+from rgbkeyboards.keyboards import Keyboards, BACKENDS, PATHS
+from rgbkeyboards import keygroups
+from rgbkeyboards.keyboard import BaseKeyboard
+from rgbkeyboards.controller import KeyboardController
+from rgbkeyboards import effects

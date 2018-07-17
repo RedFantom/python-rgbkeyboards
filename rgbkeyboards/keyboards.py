@@ -1,107 +1,124 @@
-# Python RGB Keyboards, Copyright (C) 2017 by RedFantom
-# All additions are under the copyright of their respective authors
-# For license see LICENSE
-from .corsair.corsair import Corsair
-from .masterkeys.masterkeys import MasterKeys
-from .logitech.logitech import Logitech
-from pywinusb import hid
-import cue_sdk
+"""
+Author: RedFantom
+License: GNU GPLv3
+Copyright (c) 2017-2018 RedFantom
+"""
+# Standard Library
+from platform import architecture
+import sys
+# Project Modules
+from rgbkeyboards.utilities import \
+    WINDOWS, LINUX, get_dll_path, get_device_list
+
+
+PATHS = {
+    "windows": {
+        "Corsair": {
+            "x86": "Corsair.dll",
+            "x64": "Corsair64.dll"
+        },
+        "Cooler Master Technology Inc.": {
+            "x86": "MasterKeys.dll",
+            "x64": "MasterKeys64.dll"
+        },
+        "Logitech, Inc": {
+            "x86": "Logitech.dll",
+            "x64": "Logitech64.dll",
+        }
+    },
+    "linux": {}
+}
+
+BACKENDS = {
+    "windows": {
+        "Corsair":
+            "rgbkeyboards.windows.corsair",
+        "Cooler Master Technology Inc.":
+            "rgbkeyboards.windows.masterkeys",
+        "Logitech, Inc.":
+            "rgbkeyboards.windows.logitech"
+    },
+    "linux": {
+        "Cooler Master Technology Inc.":
+            "rgbkeyboards.linux.masterkeys",
+    }
+}
+
+VENDORS = list(BACKENDS[WINDOWS].keys())
 
 
 class Keyboards(object):
-    BRANDS = ["Cooler Master", "Logitech", "Corsair"]
-    MODELS = ["MasterKeys Pro L", "MasterKeys Pro M", "MasterKeys Pro S",
-              "K65", "K70", "K95", "Strafe",
-              "G810", "G910"]
+    """
+    Interface to control the various back-ends available
 
-    def __init__(self):
-        pass
+    Uses HID device interface libraries to detect devices and choose the
+    correct back-end based on platform and product manufacturer.
+    """
 
-    def __exit__(self):
-        pass
+    def __init__(self, paths=PATHS):
+        """
+        :param paths: Dictionary of paths to the SDK DLL files
+        """
+        self.paths = PATHS
+        if paths is not None:
+            self.paths.update(paths)
 
-    def get_keyboard_manufacturer(self):
-        """
-        Get the name of the keyboard manufacturer by accessing the win32api
-        :return: str such as in BRANDS
-        """
-        all_devices = hid.HidDeviceFilter().get_devices_by_parent()
-        manufacturers = []
-        for parent, hid_items in list(all_devices.items()):
-            for item in hid_items:
-                manufacturers.append(item.vendor_name)
-        for brand in self.BRANDS:
-            for manufacturer in manufacturers:
-                if brand in manufacturer:
-                    return brand
-        raise ValueError("Product manufacturer could not be established.")
+    @property
+    def platform(self):
+        """Return a proper platform string across Python versions"""
+        if sys.platform == "win32":
+            return WINDOWS
+        elif "linux" in sys.platform:
+            return LINUX
+        raise RuntimeError(
+            "Unsupported platform detected: {}".format(sys.platform))
 
-    def get_keyboard_model(self):
-        """
-        Get the name of the keyboard model by accessing the win32api
-        :return: str such as in MODELS
-        """
-        all_devices = hid.HidDeviceFilter().get_devices_by_parent()
-        products = []
-        for parent, hid_items in list(all_devices.items()):
-            for item in hid_items:
-                products.append(item.product_name)
-        for model in self.MODELS:
-            for product in products:
-                if product in model:
-                    return model
-        raise ValueError("Product model could not be established.")
+    def detect_devices(self):
+        """Detect devices using either the Windows or Linux backend"""
+        devices = get_device_list(VENDORS)
+        for device in devices.copy():
+            backend = self.get_backend(device)
+            if backend is None:
+                devices.remove(device)
+                continue
+            _, product = device
+            if not backend.is_product_supported(product):
+                devices.remove(device)
+        return devices
 
-    def get_control_object(self):
-        """
-        Get a control object for the user's keyboard automatically
-        :return: object
-        """
-        manufacturer = self.get_keyboard_manufacturer()
-        if manufacturer == "Cooler Master":
-            return MasterKeys()
-        elif manufacturer == "Logitech":
-            return Logitech()
-        elif manufacturer == "Corsair":
-            return Corsair()
-        else:
-            raise ValueError("No valid manufacturer found.")
+    def get_backend(self, device):
+        """Return the proper backend Keyboard class for a given device"""
+        if device.vendor not in BACKENDS[self.platform]:
+            return None
+        module = BACKENDS[self.platform][device.vendor]
+        try:
+            exec("from {} import Keyboard".format(module))
+        except ImportError as e:
+            raise RuntimeError("Failed to load back-end {}".format(module))
+        return locals()["Keyboard"]
 
-    def get_setup_control_object(self):
-        """
-        Get a control object that is fully setup and ready to use with its functions
-        :return: object
-        """
-        manufacturer = self.get_keyboard_manufacturer()
-        model = self.get_keyboard_model()
-        if manufacturer == "Cooler Master":
-            keyboard = MasterKeys()
-            if model == "MasterKeys Pro L":
-                keyboard.set_control_device(MasterKeys.RGB_L)
-            elif model == "MasterKeys Pro M":
-                keyboard.set_control_device(MasterKeys.RGB_M)
-            elif model == "MasterKeys Pro S":
-                keyboard.set_control_device(MasterKeys.RGB_S)
-            else:
-                raise ValueError("No valid manufacturer/model combination found.")
-            keyboard.set_led_control_enabled(True)
-            return keyboard
-        elif manufacturer == "Logitech":
-            keyboard = Logitech()
-            if model == "G810":
-                keyboard.set_control_device(Logitech.RGB_PK)
-            elif model == "G910":
-                keyboard.set_control_device(Logitech.RGB_ST)
-            else:
-                raise ValueError("No valid manufacturer/model combination found.")
-        elif manufacturer == "Corsair":
-            keyboard = Corsair()
-            keyboard.set_control_device(cue_sdk.CDT.Keyboard)
-            return keyboard
-        else:
-            raise ValueError("No valid manufacturer found.")
+    @property
+    def keyboard(self):
+        """Return proper Keyboard back-end instance for connected device"""
+        devices = self.detect_devices()
+        if len(devices) == 0:
+            return None
+        device = devices[0]
+        return self.init_keyboard(device)
+
+    def init_keyboard(self, device):
+        """Initialize a given keyboard device"""
+        Keyboard = self.get_backend(device)
+        return self.init_backend(Keyboard, device)
+
+    def init_backend(self, Keyboard, device):
+        """Initialize a Keyboard class for a given device"""
+        args = tuple()
+        arch = "x86" if architecture()[0][:2] != "64" else "x64"
+        if device.vendor in PATHS[self.platform]:
+            args = (get_dll_path(PATHS[self.platform][device.vendor][arch]),)
+        return Keyboard(*args)
 
 
 if __name__ == '__main__':
-    print(Keyboards().get_keyboard_manufacturer())
-    print(Keyboards().get_keyboard_model())
+    print(Keyboards().keyboard)
