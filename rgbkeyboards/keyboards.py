@@ -47,6 +47,19 @@ BACKENDS = {
 VENDORS = list(BACKENDS[WINDOWS].keys())
 
 
+def register_backend(platform, vendor, module, dlls=None):
+    """Register a new backend for a certain set of keyboards"""
+    if platform not in (LINUX, WINDOWS):
+        raise ValueError("Invalid platform value")
+    BACKENDS[platform][vendor] = module
+    if dlls is not None:
+        assert isinstance(dlls, dict)
+        if "x86" not in dlls or "x64" not in dlls:
+            raise ValueError("Invalid dlls dictionary")
+        PATHS[platform][vendor] = dlls
+    return True
+
+
 class Keyboards(object):
     """
     Interface to control the various back-ends available

@@ -5,7 +5,7 @@ Copyright (c) 2017-2018 RedFantom
 """
 # Standard Library
 from threading import Lock
-from rgbkeyboards._queue import Queue
+from ._queue import Queue
 
 
 class BaseKeyboard(object):

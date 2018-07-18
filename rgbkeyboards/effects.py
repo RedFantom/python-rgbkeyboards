@@ -18,8 +18,31 @@ Effect = namedtuple("Effect", ["name", "instr"])
 Instruction = namedtuple("Instruction", ["color", "key", "duration"])
 
 
+"""
+General instructions
+
+The build_* functions in this file each can generate a set of 
+Instructions stored in an Effect that can be scheduled on a keyboard 
+using the KeyboardController. The Effects may be applied to individual
+keys as well as all keys. Effects for all keys may override the effects
+applied to individual keys. Multiple individual key effects can be 
+scheduled for the same moment as they can be individually applied. This
+may decrease performance for all applied effects.
+
+:param color: Valid color tuple[int], len 3, 8-bit values
+:param duration: Desired duration of the effect in seconds, can be float
+:param keys: The keys an effect should affect. ALL_KEYS defines the use
+    of set_full_color, which may put the keyboard in a different mode 
+    and thus override individual effects.
+:param r: Resolution of the effect (duration of individual Instructions)
+    A higher resolution means less instructions and thus less time spent
+    on execution, but a lower resolution may result in more instructions
+    and thus provide a more fluent effect.
+"""
+
+
 def build_flash(color, duration, keys=ALL_KEYS):
-    # (tuple[int], float) -> Effect
+    # (tuple[int], float, (list[str], str, ALL_KEYS)) -> Effect
     """Create an Effect that flashes the keyboard in a single color"""
     instr = [
         Instruction(color, keys, duration),
