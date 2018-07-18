@@ -91,7 +91,7 @@ class KeyboardController(Thread):
         Exits the loop when the function stop() is called.
         """
         self._start = datetime.now()
-        with self._kb:  # Enables control
+        with self._kb.control():  # Enables control
             if not self._kb.is_control_enabled:
                 raise RuntimeError("Could not enable keyboard LED control")
             self._logger.debug("Claimed LED Control")

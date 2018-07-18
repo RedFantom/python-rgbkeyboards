@@ -44,8 +44,6 @@ BACKENDS = {
     }
 }
 
-VENDORS = list(BACKENDS[WINDOWS].keys())
-
 
 def register_backend(platform, vendor, module, dlls=None):
     """Register a new backend for a certain set of keyboards"""
@@ -88,7 +86,7 @@ class Keyboards(object):
 
     def detect_devices(self):
         """Detect devices using either the Windows or Linux backend"""
-        devices = get_device_list(VENDORS)
+        devices = get_device_list(list(BACKENDS[self.platform].keys()))
         for device in devices.copy():
             backend = self.get_backend(device)
             if backend is None:
@@ -97,6 +95,7 @@ class Keyboards(object):
             _, product = device
             if not backend.is_product_supported(product):
                 devices.remove(device)
+        print("Detected devices:", devices)
         return devices
 
     def get_backend(self, device):

@@ -47,6 +47,6 @@ setup(
         "Development Status :: 3 - Alpha",
     ],
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=requirements + ["pynput"],
     zip_safe=False
 )

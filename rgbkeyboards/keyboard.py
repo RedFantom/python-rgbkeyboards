@@ -4,6 +4,7 @@ License: GNU GPLv3
 Copyright (c) 2017-2018 RedFantom
 """
 # Standard Library
+from contextlib import contextmanager
 from threading import Lock
 from ._queue import Queue
 
@@ -72,20 +73,16 @@ class BaseKeyboard(object):
         """Return whether a supported device is available"""
         return self._exec_func(self._get_device_available, *args)
 
-    def __enter__(self):
-        """Allows class to be used in with-clause"""
+    @contextmanager
+    def control(self):
+        """Context manager granting control on __enter__ and release"""
         if self.get_device_available() is False:
-            raise RuntimeError("No available device found")
-        self.enable_control()
-        if self._control is False:
-            raise RuntimeError("Failed to enable control on keyboard")
-        return self
-
-    def __exit__(self, *args):
-        """Disable control at end of with-clause"""
-        if self._control is False:
-            return
-        self.disable_control()
+            raise ValueError("No device available")
+        try:
+            self.enable_control()
+            yield
+        finally:
+            self.disable_control()
 
     @property
     def is_control_enabled(self):
