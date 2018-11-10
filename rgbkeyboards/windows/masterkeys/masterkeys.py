@@ -104,7 +104,7 @@ class Keyboard(BaseKeyboard):
 
     def _set_control_device(self):
         """Select the first encountered keyboard for control"""
-        available_dev = self.get_device_available(True)
+        available_dev = self._get_device_available(True)
         if available_dev is None:
             return False
         r = self.library.SetControlDevice(available_dev)
