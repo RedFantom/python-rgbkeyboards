@@ -41,6 +41,7 @@ BACKENDS = {
     "linux": {
         "Cooler Master Technology Inc.":
             "rgbkeyboards.linux.masterkeys",
+        "Razer": "rgbkeyboards.linux.razer"
     }
 }
 
